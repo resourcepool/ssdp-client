@@ -9,7 +9,7 @@ This library works on Android as well.
 ## Add it to your project
 Maven:
 ```xml
-<!-- https://mvnrepository.com/artifact/io.resourcepool/jarpic-client -->
+<!-- https://mvnrepository.com/artifact/io.resourcepool/ssdp-client -->
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
