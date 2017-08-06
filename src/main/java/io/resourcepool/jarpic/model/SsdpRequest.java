@@ -12,5 +12,18 @@ public abstract class SsdpRequest {
     return DiscoveryRequest.builder();
   }
 
-  // END GENERATED CODE
+  /**
+   * @return a new SSDP DiscoveryRequest for all device
+   */
+  public static DiscoveryRequest discoverAll() {
+    return DiscoveryRequest.builder().build();
+  }
+
+  /**
+   * @return a new SSDP DiscoveryRequest for all rootdevice
+   */
+  public static DiscoveryRequest discoverRootDevice() {
+    return DiscoveryRequest.builder().serviceType("upnp:rootdevice").build();
+  }
+
 }

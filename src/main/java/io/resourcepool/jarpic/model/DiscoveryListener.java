@@ -21,4 +21,11 @@ public interface DiscoveryListener {
    * @param announcement the announcement of the specific service
    */
   void onServiceAnnouncement(SsdpServiceAnnouncement announcement);
+
+  /**
+   * Called when an exception occured within the process.
+   *
+   * @param ex the exception raised
+   */
+  void onFailed(Exception ex);
 }

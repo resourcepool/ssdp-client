@@ -26,13 +26,13 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Loïc Ortola on 05/08/2017
  */
-public class SsdpClientImpl implements SsdpClient {
+public class SsdpClientImpl extends SsdpClient {
 
   // Interval in ms between subsequent discovery requests
   private static final long INTERVAL_BETWEEN_REQUESTS = 10000;
 
   private enum State {
-    ACTIVE, IDLE
+    ACTIVE, IDLE, STOPPING
   }
 
   private ScheduledExecutorService sendExecutor = Executors.newScheduledThreadPool(1);
@@ -70,9 +70,10 @@ public class SsdpClientImpl implements SsdpClient {
   }
 
   @Override
-  public void discoverServices(DiscoveryRequest req, DiscoveryListener callback) {
+  public void discoverServices(DiscoveryRequest req, final DiscoveryListener callback) {
     if (State.ACTIVE.equals(state)) {
-      throw new IllegalStateException("Another discovery is in progress. Stop the first discovery before starting a new one.");
+      callback.onFailed(new IllegalStateException("Another discovery is in progress. Stop the first discovery before starting a new one."));
+      return;
     }
     // Reset attributes
     reset(req, callback);
@@ -99,7 +100,11 @@ public class SsdpClientImpl implements SsdpClient {
             handleIncomingPacket(packet);
           }
         } catch (IOException e) {
-          throw new IllegalStateException(e);
+          if (clientSocket.isClosed() && !State.ACTIVE.equals(state)) {
+            // This could happen when closing socket. In that case, this is not an issue.
+            return;
+          }
+          callback.onFailed(e);
         }
       }
     });
@@ -144,7 +149,11 @@ public class SsdpClientImpl implements SsdpClient {
       // Clear requests after they have been sent
       requests.clear();
     } catch (IOException e) {
-      throw new IllegalStateException(e);
+      if (clientSocket.isClosed() && !State.ACTIVE.equals(state)) {
+        // This could happen when closing socket. In that case, this is not an issue.
+        return;
+      }
+      callback.onFailed(e);
     }
   }
 
@@ -153,11 +162,11 @@ public class SsdpClientImpl implements SsdpClient {
    */
   private void openAndBindSocket() {
     try {
-      this.clientSocket = new MulticastSocket(Ssdp.getSsdpMulticastPort());
+      this.clientSocket = new MulticastSocket(SsdpParams.getSsdpMulticastPort());
       Utils.selectAppropriateInterface(clientSocket);
-      this.clientSocket.joinGroup(Ssdp.getSsdpMulticastAddress());
+      this.clientSocket.joinGroup(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
-      throw new IllegalStateException("Cannot bind multicast socket: " + e.getMessage(), e);
+      callback.onFailed(e);
     }
   }
 
@@ -191,17 +200,18 @@ public class SsdpClientImpl implements SsdpClient {
 
   @Override
   public void stopDiscovery() {
-    this.state = State.IDLE;
+    this.state = State.STOPPING;
     this.receiveExecutor.shutdownNow();
     this.sendExecutor.shutdownNow();
     this.callback = null;
     this.requests = null;
     try {
-      this.clientSocket.leaveGroup(Ssdp.getSsdpMulticastAddress());
+      this.clientSocket.leaveGroup(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
       // Fail silently
     } finally {
       this.clientSocket.close();
     }
+    this.state = State.IDLE;
   }
 }

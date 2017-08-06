@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
  *
  * @author Loïc Ortola on 05/08/2017
  */
-public class Ssdp {
+public class SsdpParams {
   private static InetAddress ssdpMulticastIpv4Address;
   private static final int SSDP_MULTICAST_PORT = 1900;
 
@@ -20,7 +20,7 @@ public class Ssdp {
    */
   public static InetAddress getSsdpMulticastAddress() {
     if (ssdpMulticastIpv4Address == null) {
-      synchronized (Ssdp.class) {
+      synchronized (SsdpParams.class) {
         if (ssdpMulticastIpv4Address == null) {
           try {
             ssdpMulticastIpv4Address = InetAddress.getByName("239.255.255.250");

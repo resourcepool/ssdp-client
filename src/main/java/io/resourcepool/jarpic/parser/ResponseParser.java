@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.resourcepool.jarpic.client.Ssdp.UTF_8;
+import static io.resourcepool.jarpic.client.SsdpParams.UTF_8;
 
 /**
  * @author Loïc Ortola on 11/03/2016.

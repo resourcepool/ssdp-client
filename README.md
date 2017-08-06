@@ -1,5 +1,5 @@
 # jarpic-client
-A Simple Asynchronous SSDP 1.0 Java Client using JDK APIs only.
+A Simple Asynchronous SSDP/1.0 UPNP/1.1 Java Client using JDK APIs only.
 
 This library works on Android as well.
 
@@ -13,12 +13,12 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.10.0</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:1.0.0'
+compile 'io.resourcepool:ssdp-client:1.1.0'
 ```
 
 ## Usage
@@ -26,8 +26,8 @@ compile 'io.resourcepool:ssdp-client:1.0.0'
 Discover all SSDP services:
 
 ```java
-SsdpClient client = new SsdpClientImpl();
-    DiscoveryRequest all = DiscoveryRequest.builder().build();
+    SsdpClient client = SsdpClient.create();
+    DiscoveryRequest all = SsdpRequest.discoverAll();
     client.discoverServices(all, new DiscoveryListener() {
       @Override
       public void onServiceDiscovered(SsdpService service) {
@@ -44,11 +44,11 @@ SsdpClient client = new SsdpClientImpl();
 Discover specific SSDP service by serviceType:
 
 ```java
-SsdpClient client = new SsdpClientImpl();
-    DiscoveryRequest networkStorageDevices = DiscoveryRequest.builder()
+    SsdpClient client = SsdpClient.create();
+    DiscoveryRequest networkStorageDevice = DiscoveryRequest.builder()
     .serviceType("urn:schemas-upnp-org:device:networkstoragedevice:1")
     .build();
-    client.discoverServices(networkStorageDevices, new DiscoveryListener() {
+    client.discoverServices(networkStorageDevice, new DiscoveryListener() {
       @Override
       public void onServiceDiscovered(SsdpService service) {
         System.out.println("Found service: " + service);
@@ -63,7 +63,7 @@ SsdpClient client = new SsdpClientImpl();
 
 Discovery is not a mandatory activity. You might just want to listen to announcements:
 ```java
-SsdpClient client = new SsdpClientImpl();
+    SsdpClient client = SsdpClient.create();
     client.discoverServices(null, new DiscoveryListener() {
       @Override
       public void onServiceDiscovered(SsdpService service) {

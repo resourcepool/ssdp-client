@@ -6,7 +6,7 @@ import io.resourcepool.jarpic.model.DiscoveryRequest;
 /**
  * @author Loïc Ortola on 11/03/2016.
  */
-public interface SsdpClient {
+public abstract class SsdpClient {
 
   /**
    * Discover specific devices of particular ServiceType.
@@ -14,12 +14,19 @@ public interface SsdpClient {
    * @param req      the discovery request
    * @param callback the discovery listener
    */
-  void discoverServices(DiscoveryRequest req, DiscoveryListener callback);
+  public abstract void discoverServices(DiscoveryRequest req, DiscoveryListener callback);
 
   /**
    * Stop discovery.
    */
-  void stopDiscovery();
+  public abstract void stopDiscovery();
+
+  /**
+   * @return new instance of SsdpClient.
+   */
+  public SsdpClient create() {
+    return new SsdpClientImpl();
+  }
 
 
 }
