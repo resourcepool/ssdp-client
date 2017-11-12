@@ -2,6 +2,7 @@ package io.resourcepool.jarpic.client;
 
 import io.resourcepool.jarpic.client.request.SsdpDiscovery;
 import io.resourcepool.jarpic.client.response.SsdpResponse;
+import io.resourcepool.jarpic.exception.NoSerialNumberException;
 import io.resourcepool.jarpic.model.DiscoveryListener;
 import io.resourcepool.jarpic.model.DiscoveryRequest;
 import io.resourcepool.jarpic.model.SsdpService;
@@ -178,6 +179,10 @@ public class SsdpClientImpl extends SsdpClient {
    */
   private void handlePresenceAnnouncement(SsdpResponse response) {
     SsdpServiceAnnouncement ssdpServiceAnnouncement = response.toServiceAnnouncement();
+    if (ssdpServiceAnnouncement.getSerialNumber() == null) {
+      callback.onFailed(new NoSerialNumberException());
+      return;
+    }
     if (cache.containsKey(ssdpServiceAnnouncement.getSerialNumber())) {
       callback.onServiceAnnouncement(ssdpServiceAnnouncement);
     } else {
@@ -192,6 +197,10 @@ public class SsdpClientImpl extends SsdpClient {
    */
   private void handleDiscoveryResponse(SsdpResponse response) {
     SsdpService ssdpService = response.toService();
+    if (ssdpService.getSerialNumber() == null) {
+      callback.onFailed(new NoSerialNumberException());
+      return;
+    }
     if (!cache.containsKey(ssdpService.getSerialNumber())) {
       callback.onServiceDiscovered(ssdpService);
     }

@@ -13,12 +13,12 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>1.10.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:1.1.0'
+compile 'io.resourcepool:ssdp-client:1.2.0'
 ```
 
 ## Usage
