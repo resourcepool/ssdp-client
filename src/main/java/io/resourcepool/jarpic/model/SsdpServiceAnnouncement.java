@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class SsdpServiceAnnouncement {
   public enum Status {
-    ALIVE, BYEBYE;
+    ALIVE, BYEBYE, UPDATE;
 
     /**
      * Parse NTS or ST header into a Status.
@@ -26,6 +26,9 @@ public class SsdpServiceAnnouncement {
       }
       if ("ssdp:byebye".equals(nts)) {
         return BYEBYE;
+      }
+      if ("ssdp:update".equals(nts)) {
+        return UPDATE;
       }
       return null;
     }
