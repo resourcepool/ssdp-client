@@ -1,6 +1,6 @@
-package io.resourcepool.jarpic.model;
+package io.resourcepool.ssdp.model;
 
-import io.resourcepool.jarpic.client.response.SsdpResponse;
+import io.resourcepool.ssdp.client.response.SsdpResponse;
 
 import java.net.InetAddress;
 import java.util.Map;

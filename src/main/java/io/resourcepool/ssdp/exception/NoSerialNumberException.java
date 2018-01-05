@@ -1,4 +1,4 @@
-package io.resourcepool.jarpic.exception;
+package io.resourcepool.ssdp.exception;
 
 /**
  * TODO class details.

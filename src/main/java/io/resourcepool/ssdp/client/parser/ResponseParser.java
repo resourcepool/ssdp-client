@@ -1,6 +1,6 @@
-package io.resourcepool.jarpic.parser;
+package io.resourcepool.ssdp.client.parser;
 
-import io.resourcepool.jarpic.client.response.SsdpResponse;
+import io.resourcepool.ssdp.client.response.SsdpResponse;
 
 import java.net.DatagramPacket;
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static io.resourcepool.jarpic.client.SsdpParams.UTF_8;
+import static io.resourcepool.ssdp.client.SsdpParams.UTF_8;
 
 /**
  * @author Loïc Ortola on 11/03/2016.

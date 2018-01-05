@@ -1,13 +1,16 @@
-package io.resourcepool.jarpic.client;
+package io.resourcepool.ssdp.client.impl;
 
-import io.resourcepool.jarpic.client.request.SsdpDiscovery;
-import io.resourcepool.jarpic.client.response.SsdpResponse;
-import io.resourcepool.jarpic.exception.NoSerialNumberException;
-import io.resourcepool.jarpic.model.DiscoveryListener;
-import io.resourcepool.jarpic.model.DiscoveryRequest;
-import io.resourcepool.jarpic.model.SsdpService;
-import io.resourcepool.jarpic.model.SsdpServiceAnnouncement;
-import io.resourcepool.jarpic.parser.ResponseParser;
+import io.resourcepool.ssdp.client.SsdpClient;
+import io.resourcepool.ssdp.client.SsdpParams;
+import io.resourcepool.ssdp.client.util.Utils;
+import io.resourcepool.ssdp.client.request.SsdpDiscovery;
+import io.resourcepool.ssdp.client.response.SsdpResponse;
+import io.resourcepool.ssdp.exception.NoSerialNumberException;
+import io.resourcepool.ssdp.model.DiscoveryListener;
+import io.resourcepool.ssdp.model.DiscoveryRequest;
+import io.resourcepool.ssdp.model.SsdpService;
+import io.resourcepool.ssdp.model.SsdpServiceAnnouncement;
+import io.resourcepool.ssdp.client.parser.ResponseParser;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

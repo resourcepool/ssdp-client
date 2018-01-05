@@ -1,10 +1,10 @@
-package io.resourcepool.jarpic.client.request;
+package io.resourcepool.ssdp.client.request;
 
-import io.resourcepool.jarpic.client.SsdpParams;
+import io.resourcepool.ssdp.client.SsdpParams;
 
 import java.net.DatagramPacket;
 
-import static io.resourcepool.jarpic.client.SsdpParams.UTF_8;
+import static io.resourcepool.ssdp.client.SsdpParams.UTF_8;
 
 /**
  * This creates the SSDP Discovery Request.

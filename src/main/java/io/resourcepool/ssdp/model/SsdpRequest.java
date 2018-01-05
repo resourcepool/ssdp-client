@@ -1,4 +1,4 @@
-package io.resourcepool.jarpic.model;
+package io.resourcepool.ssdp.model;
 
 /**
  * @author Loïc Ortola on 05/08/2017.

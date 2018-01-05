@@ -1,7 +1,8 @@
-package io.resourcepool.jarpic.client;
+package io.resourcepool.ssdp.client;
 
-import io.resourcepool.jarpic.model.DiscoveryListener;
-import io.resourcepool.jarpic.model.DiscoveryRequest;
+import io.resourcepool.ssdp.client.impl.SsdpClientImpl;
+import io.resourcepool.ssdp.model.DiscoveryListener;
+import io.resourcepool.ssdp.model.DiscoveryRequest;
 
 /**
  * @author Loïc Ortola on 11/03/2016.
@@ -24,9 +25,8 @@ public abstract class SsdpClient {
   /**
    * @return new instance of SsdpClient.
    */
-  public SsdpClient create() {
+  public static SsdpClient create() {
     return new SsdpClientImpl();
   }
-
 
 }

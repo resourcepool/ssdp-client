@@ -1,4 +1,4 @@
-package io.resourcepool.jarpic.client;
+package io.resourcepool.ssdp.client.util;
 
 import java.net.InetAddress;
 import java.net.MulticastSocket;

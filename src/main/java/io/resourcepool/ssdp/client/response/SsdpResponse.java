@@ -1,7 +1,7 @@
-package io.resourcepool.jarpic.client.response;
+package io.resourcepool.ssdp.client.response;
 
-import io.resourcepool.jarpic.model.SsdpService;
-import io.resourcepool.jarpic.model.SsdpServiceAnnouncement;
+import io.resourcepool.ssdp.model.SsdpService;
+import io.resourcepool.ssdp.model.SsdpServiceAnnouncement;
 
 import java.net.InetAddress;
 import java.util.Arrays;
