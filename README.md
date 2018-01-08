@@ -13,22 +13,28 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>2.0.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.0.0'
+compile 'io.resourcepool:ssdp-client:2.2.0'
 ```
 
 ## Changelog
+### 2.2.0
+ * #5 Solved discovery request cleaned after first call
+ * #7 Solved regex parsing issue on headers with multiple spaced semicolumns
+
+### 2.1.0
+ * #4 Solved dynamic port on client socket binding
 
 ### 2.0.0
- * Put Client builder as static
+ * #2 Put Client builder as static
  * Support Update announcement of SSDP
  * Refactored packages (get ready for Java 9 module one day)
 ### 1.2.0
- * Fixed NPE when no Serial Number
+ * #1 Fixed NPE when no Serial Number
 ### 1.1.0
  * Resolved issue when closing socket
  * Updated docs
@@ -95,7 +101,7 @@ ssdpClient.stopDiscovery();
 ```
 
 ## License
-   Copyright 2017 Resourcepool
+   Copyright 2018 Resourcepool
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
