@@ -4,7 +4,7 @@
 
   <groupId>io.resourcepool</groupId>
   <artifactId>ssdp-client</artifactId>
-  <version>2.1.0</version>
+  <version>2.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- Project headers-->
@@ -34,7 +34,7 @@
   <scm>
     <url>https://github.com/resourcepool/ssdp-client.git</url>
     <connection>scm:git:https://github.com/resourcepool/ssdp-client.git</connection>
-    <tag>2.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <!-- Release -->
