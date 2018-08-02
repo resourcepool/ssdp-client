@@ -26,7 +26,7 @@ public class ResponseParser {
   // Patterns
   private static final Pattern SEARCH_REQUEST_LINE_PATTERN = Pattern.compile("^HTTP/1\\.1 [0-9]+ .*");
   private static final Pattern SERVICE_ANNOUNCEMENT_LINE_PATTERN = Pattern.compile("NOTIFY \\* HTTP/1.1");
-  private static final Pattern HEADER_PATTERN = Pattern.compile("(.*): (.*)");
+  private static final Pattern HEADER_PATTERN = Pattern.compile("(.*?):(.*)$");
   // CRLF
   private static final byte[] CRLF = "\r\n".getBytes(UTF_8);
 
@@ -68,7 +68,7 @@ public class ResponseParser {
       String line = headerLines[i];
       Matcher matcher = HEADER_PATTERN.matcher(line);
       if (matcher.matches()) {
-        headers.put(matcher.group(1).toUpperCase(), matcher.group(2));
+        headers.put(matcher.group(1).toUpperCase().trim(), matcher.group(2).trim());
       }
     }
     // Determine expiry depending on the presence of cache-control or expires headers.

@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TODO class details.
+ * Testing SSDP Socket receive
  *
  * @author Loïc Ortola on 08/01/2018
  */
