@@ -150,8 +150,6 @@ public class SsdpClientImpl extends SsdpClient {
           }
         }
       }
-      // Clear requests after they have been sent
-      requests.clear();
     } catch (IOException e) {
       if (clientSocket.isClosed() && !State.ACTIVE.equals(state)) {
         // This could happen when closing socket. In that case, this is not an issue.
