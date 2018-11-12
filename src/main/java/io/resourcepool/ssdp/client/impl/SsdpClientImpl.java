@@ -13,7 +13,11 @@ import io.resourcepool.ssdp.model.SsdpServiceAnnouncement;
 import io.resourcepool.ssdp.client.parser.ResponseParser;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -216,13 +220,12 @@ public class SsdpClientImpl extends SsdpClient {
    * @throws IOException from the MulticastSocket
    */
   private void sendOnAllInterfaces(DatagramPacket packet) throws IOException {
-    if(interfaces != null && interfaces.size() > 0) {
+    if (interfaces != null && interfaces.size() > 0) {
       for (NetworkInterface iface : interfaces) {
         clientSocket.setNetworkInterface(iface);
         clientSocket.send(packet);
       }
-    }
-    else {
+    } else {
       clientSocket.send(packet);
     }
   }
@@ -235,14 +238,13 @@ public class SsdpClientImpl extends SsdpClient {
    * @throws IOException from the MulticastSocket
    */
   private void joinGroupOnAllInterfaces(InetAddress address) throws IOException {
-    if(interfaces != null && interfaces.size() > 0) {
+    if (interfaces != null && interfaces.size() > 0) {
       InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
 
       for (NetworkInterface iface : interfaces) {
         this.clientSocket.joinGroup(socketAddress, iface);
       }
-    }
-    else {
+    } else {
       this.clientSocket.joinGroup(address);
     }
   }
@@ -255,14 +257,13 @@ public class SsdpClientImpl extends SsdpClient {
    * @throws IOException from the MulticastSocket
    */
   private void leaveGroupOnAllInterfaces(InetAddress address) throws IOException {
-    if(interfaces != null && interfaces.size() > 0) {
+    if (interfaces != null && interfaces.size() > 0) {
       InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
 
       for (NetworkInterface iface : interfaces) {
         this.clientSocket.leaveGroup(socketAddress, iface);
       }
-    }
-    else {
+    } else {
       this.clientSocket.leaveGroup(address);
     }
   }

@@ -1,7 +1,6 @@
 package io.resourcepool.ssdp.client.util;
 
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ public abstract class Utils {
    * Creates a list of viable network interfaces for Multicast.
    *
    * @throws SocketException if something bad happens
+   * @return list of interfaces
    */
   public static List<NetworkInterface> getMulticastInterfaces() throws SocketException {
     List<NetworkInterface> viableInterfaces = new ArrayList<NetworkInterface>();
