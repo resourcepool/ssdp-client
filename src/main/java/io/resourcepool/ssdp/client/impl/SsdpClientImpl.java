@@ -37,6 +37,22 @@ public class SsdpClientImpl extends SsdpClient {
 
   // Interval in ms between subsequent discovery requests
   private static final long INTERVAL_BETWEEN_REQUESTS = 10000;
+  private static final DiscoveryListener NOOP_LISTENER = new DiscoveryListener() {
+    @Override
+    public void onServiceDiscovered(SsdpService service) {
+
+    }
+
+    @Override
+    public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+
+    }
+
+    @Override
+    public void onFailed(Exception ex) {
+
+    }
+  };
 
   private enum State {
     ACTIVE, IDLE, STOPPING
@@ -47,7 +63,7 @@ public class SsdpClientImpl extends SsdpClient {
 
   // Stateful attributes
   private List<DiscoveryRequest> requests;
-  private DiscoveryListener callback;
+  private DiscoveryListener callback = NOOP_LISTENER;
   private State state;
   private Map<String, SsdpService> cache = new ConcurrentHashMap<String, SsdpService>();
   private MulticastSocket clientSocket;
@@ -273,7 +289,7 @@ public class SsdpClientImpl extends SsdpClient {
     this.state = State.STOPPING;
     this.receiveExecutor.shutdownNow();
     this.sendExecutor.shutdownNow();
-    this.callback = null;
+    this.callback = NOOP_LISTENER;
     this.requests = null;
     try {
       leaveGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
