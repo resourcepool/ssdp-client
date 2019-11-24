@@ -14,7 +14,10 @@ import io.resourcepool.ssdp.client.parser.ResponseParser;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.NetworkInterface;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +51,7 @@ public class SsdpClientImpl extends SsdpClient {
   private State state;
   private Map<String, SsdpService> cache = new ConcurrentHashMap<String, SsdpService>();
   private MulticastSocket clientSocket;
+  private List<NetworkInterface> interfaces;
 
   /**
    * Reset all stateful attributes.
@@ -143,10 +147,10 @@ public class SsdpClientImpl extends SsdpClient {
       }
       for (DiscoveryRequest req : requests) {
         if (req.getServiceTypes() == null || req.getServiceTypes().isEmpty()) {
-          clientSocket.send(SsdpDiscovery.getDatagram(null));
+          sendOnAllInterfaces(SsdpDiscovery.getDatagram(null));
         } else {
           for (String st : req.getServiceTypes()) {
-            clientSocket.send(SsdpDiscovery.getDatagram(st));
+            sendOnAllInterfaces(SsdpDiscovery.getDatagram(st));
           }
         }
       }
@@ -165,8 +169,8 @@ public class SsdpClientImpl extends SsdpClient {
   private void openAndBindSocket() {
     try {
       this.clientSocket = new MulticastSocket();
-      Utils.selectAppropriateInterface(clientSocket);
-      this.clientSocket.joinGroup(SsdpParams.getSsdpMulticastAddress());
+      interfaces = Utils.getMulticastInterfaces();
+      joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
       callback.onFailed(e);
     }
@@ -208,6 +212,62 @@ public class SsdpClientImpl extends SsdpClient {
     cache.put(ssdpService.getSerialNumber(), ssdpService);
   }
 
+  /**
+   * Send the datagram packet on all interfaces.
+   *
+   * Falls back to the default send() if the interfaces list is not populated
+   * @param packet the datagram to send
+   * @throws IOException from the MulticastSocket
+   */
+  private void sendOnAllInterfaces(DatagramPacket packet) throws IOException {
+    if (interfaces != null && interfaces.size() > 0) {
+      for (NetworkInterface iface : interfaces) {
+        clientSocket.setNetworkInterface(iface);
+        clientSocket.send(packet);
+      }
+    } else {
+      clientSocket.send(packet);
+    }
+  }
+
+  /**
+   * Joins the given multicast group on all interfaces.
+   *
+   * Falls back to the default joinGroup() if the interfaces list is not populated
+   * @param address the multicast group address
+   * @throws IOException from the MulticastSocket
+   */
+  private void joinGroupOnAllInterfaces(InetAddress address) throws IOException {
+    if (interfaces != null && interfaces.size() > 0) {
+      InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
+
+      for (NetworkInterface iface : interfaces) {
+        this.clientSocket.joinGroup(socketAddress, iface);
+      }
+    } else {
+      this.clientSocket.joinGroup(address);
+    }
+  }
+
+  /**
+   * Leaves the multicast group on all interfaces.
+   *
+   * Falls back to the default leaveGroup() if the interfaces list is not populated
+   * @param address the multicast group address
+   * @throws IOException from the MulticastSocket
+   */
+  private void leaveGroupOnAllInterfaces(InetAddress address) throws IOException {
+    if (interfaces != null && interfaces.size() > 0) {
+      InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
+
+      for (NetworkInterface iface : interfaces) {
+        this.clientSocket.leaveGroup(socketAddress, iface);
+      }
+    } else {
+      this.clientSocket.leaveGroup(address);
+    }
+  }
+
   @Override
   public void stopDiscovery() {
     this.state = State.STOPPING;
@@ -216,12 +276,13 @@ public class SsdpClientImpl extends SsdpClient {
     this.callback = null;
     this.requests = null;
     try {
-      this.clientSocket.leaveGroup(SsdpParams.getSsdpMulticastAddress());
+      leaveGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
       // Fail silently
     } finally {
       this.clientSocket.close();
     }
+    this.interfaces = null;
     this.state = State.IDLE;
   }
 }
