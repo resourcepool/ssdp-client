@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.resourcepool.ssdp.client.impl.SsdpClientImpl.DEFAULT_INTERVAL_BETWEEN_REQUESTS;
-
 /**
  * This class represents which service types are to be discovered using SSDP.
  *
@@ -15,7 +13,7 @@ import static io.resourcepool.ssdp.client.impl.SsdpClientImpl.DEFAULT_INTERVAL_B
 public class DiscoveryRequest extends SsdpRequest {
 
   private List<String> serviceTypes;
-  private Long intervalBetweenRequests;
+  private DiscoveryOptions discoveryOptions;
 
   /**
    * @return the requested service types
@@ -24,8 +22,8 @@ public class DiscoveryRequest extends SsdpRequest {
     return serviceTypes;
   }
 
-  public Long getIntervalBetweenRequests() {
-    return intervalBetweenRequests;
+  public DiscoveryOptions getDiscoveryOptions() {
+    return discoveryOptions;
   }
 
   // BEGIN GENERATED CODE
@@ -37,7 +35,7 @@ public class DiscoveryRequest extends SsdpRequest {
 
   public static final class Builder {
     private Set<String> serviceTypes = new HashSet<String>();
-    private Long intervalBetweenRequests = DEFAULT_INTERVAL_BETWEEN_REQUESTS;
+    private DiscoveryOptions discoveryOptions = new DiscoveryOptions();
     private Builder() {
     }
 
@@ -46,25 +44,15 @@ public class DiscoveryRequest extends SsdpRequest {
       return this;
     }
 
-    /**
-     * Interval between requests in milliseconds.
-     * Defaults to 10 000 ms
-     * @param intervalBetweenRequests the interval between requests in ms
-     * @return the builder
-     */
-    public Builder intervalBetweenRequests(Long intervalBetweenRequests) {
-      if (intervalBetweenRequests < 10) {
-        throw new IllegalArgumentException("Interval between requests must be at least 10 milliseconds.");
-      }
-      this.intervalBetweenRequests = intervalBetweenRequests;
+    public Builder discoveryOptions(DiscoveryOptions discoveryOptions) {
+      this.discoveryOptions = discoveryOptions;
       return this;
     }
-
 
     public DiscoveryRequest build() {
       DiscoveryRequest req = new DiscoveryRequest();
       req.serviceTypes = new ArrayList<String>(serviceTypes);
-      req.intervalBetweenRequests = intervalBetweenRequests;
+      req.discoveryOptions = discoveryOptions;
       return req;
     }
   }

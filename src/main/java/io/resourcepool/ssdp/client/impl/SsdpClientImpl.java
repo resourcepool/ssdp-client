@@ -110,7 +110,7 @@ public class SsdpClientImpl extends SsdpClient {
       public void run() {
         sendDiscoveryRequest();
       }
-    }, 0, req.getIntervalBetweenRequests(), TimeUnit.MILLISECONDS);
+    }, 0, req.getDiscoveryOptions().getIntervalBetweenRequests(), TimeUnit.MILLISECONDS);
 
     // Receive all incoming datagrams and handle them on-the-fly
     receiveExecutor.execute(new Runnable() {
@@ -163,10 +163,10 @@ public class SsdpClientImpl extends SsdpClient {
       }
       for (DiscoveryRequest req : requests) {
         if (req.getServiceTypes() == null || req.getServiceTypes().isEmpty()) {
-          sendOnAllInterfaces(SsdpDiscovery.getDatagram(null));
+          sendOnAllInterfaces(SsdpDiscovery.getDatagram(null, req.getDiscoveryOptions()));
         } else {
           for (String st : req.getServiceTypes()) {
-            sendOnAllInterfaces(SsdpDiscovery.getDatagram(st));
+            sendOnAllInterfaces(SsdpDiscovery.getDatagram(st, req.getDiscoveryOptions()));
           }
         }
       }

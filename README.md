@@ -26,6 +26,7 @@ compile 'io.resourcepool:ssdp-client:2.2.0'
 ### 2.3.0
  * #9 Solved race condition on null callback
  * #13 Added custom interval between requests
+ * #14 Added DiscoveryOptions and custom USER-AGENT and MX headers
 
 ### 2.2.0
  * #5 Solved discovery request cleaned after first call
@@ -64,13 +65,40 @@ Discover all SSDP services:
     });
 ```
 
-Discover specific SSDP service by serviceType:
+Discover specific SSDP service by serviceType (simple version):
 
 ```java
     SsdpClient client = SsdpClient.create();
+    
     DiscoveryRequest networkStorageDevice = SsdpRequest.builder()
     .serviceType("urn:schemas-upnp-org:device:networkstoragedevice:1")
-    .intervalBetweenRequests(10000) // optional interval between requests, defaults to 10 000 milliseconds
+    .build();
+    client.discoverServices(networkStorageDevice, new DiscoveryListener() {
+      @Override
+      public void onServiceDiscovered(SsdpService service) {
+        System.out.println("Found service: " + service);
+      }
+
+      @Override
+      public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+        System.out.println("Service announced something: " + announcement);
+      }
+    });
+```
+
+Discover specific SSDP service by serviceType (with custom options):
+
+```java
+    SsdpClient client = SsdpClient.create();
+    DiscoveryOptions options = DiscoveryOptions.builder()
+    .intervalBetweenRequests(10000L) // optional interval between requests, defaults to 10 000 milliseconds
+    .maxWaitTimeSeconds(3) // optional max wait time between req and response, defaults to 3 seconds
+    .userAgent("Resourcepool SSDP Client") // optional custom user-agent, defaults to "Resourcepool SSDP Client"
+    .build();
+
+    DiscoveryRequest networkStorageDevice = SsdpRequest.builder()
+    .serviceType("urn:schemas-upnp-org:device:networkstoragedevice:1")
+    .discoveryOptions(options) // optional as well. 
     .build();
     client.discoverServices(networkStorageDevice, new DiscoveryListener() {
       @Override

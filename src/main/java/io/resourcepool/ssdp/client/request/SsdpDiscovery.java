@@ -1,6 +1,7 @@
 package io.resourcepool.ssdp.client.request;
 
 import io.resourcepool.ssdp.client.SsdpParams;
+import io.resourcepool.ssdp.model.DiscoveryOptions;
 
 import java.net.DatagramPacket;
 
@@ -19,13 +20,13 @@ public abstract class SsdpDiscovery {
    * @param serviceType the serviceType
    * @return the DatagramPacket matching the search request
    */
-  public static DatagramPacket getDatagram(String serviceType) {
+  public static DatagramPacket getDatagram(String serviceType, DiscoveryOptions options) {
     StringBuilder sb = new StringBuilder("M-SEARCH * HTTP/1.1\r\n");
     sb.append("HOST: " + SsdpParams.getSsdpMulticastAddress().getHostAddress() + ":" + SsdpParams.getSsdpMulticastPort() + "\r\n");
     sb.append("MAN: \"ssdp:discover\"\r\n");
-    sb.append("MX: 3\r\n");
-    sb.append("USER-AGENT: Resourcepool SSDP Client\r\n");
-    sb.append(serviceType == null ? "ST: ssdp:all\r\n" : "ST: " + serviceType + "\r\n\r\n");
+    sb.append("MX: " + options.getMaxWaitTimeSeconds() + "\r\n");
+    sb.append("USER-AGENT: " + options.getUserAgent() + "\r\n");
+    sb.append((serviceType == null || serviceType.trim().isEmpty()) ? "ST: ssdp:all\r\n" : "ST: " + serviceType + "\r\n\r\n");
     byte[] content = sb.toString().getBytes(UTF_8);
     return new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastPort());
   }
