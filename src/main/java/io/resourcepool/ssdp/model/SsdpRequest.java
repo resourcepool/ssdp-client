@@ -8,7 +8,7 @@ public abstract class SsdpRequest {
   /**
    * @return a new Request Builder for a discovery SSDP request
    */
-  public static DiscoveryRequest.Builder discover() {
+  public static DiscoveryRequest.Builder builder() {
     return DiscoveryRequest.builder();
   }
 

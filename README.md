@@ -22,6 +22,11 @@ compile 'io.resourcepool:ssdp-client:2.2.0'
 ```
 
 ## Changelog
+
+### 2.3.0
+ * #9 Solved race condition on null callback
+ * #13 Added custom interval between requests
+
 ### 2.2.0
  * #5 Solved discovery request cleaned after first call
  * #7 Solved regex parsing issue on headers with multiple spaced semicolumns
@@ -63,8 +68,9 @@ Discover specific SSDP service by serviceType:
 
 ```java
     SsdpClient client = SsdpClient.create();
-    DiscoveryRequest networkStorageDevice = DiscoveryRequest.builder()
+    DiscoveryRequest networkStorageDevice = SsdpRequest.builder()
     .serviceType("urn:schemas-upnp-org:device:networkstoragedevice:1")
+    .intervalBetweenRequests(10000) // optional interval between requests, defaults to 10 000 milliseconds
     .build();
     client.discoverServices(networkStorageDevice, new DiscoveryListener() {
       @Override
@@ -101,7 +107,7 @@ ssdpClient.stopDiscovery();
 ```
 
 ## License
-   Copyright 2018 Resourcepool
+   Copyright 2019 Resourcepool
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

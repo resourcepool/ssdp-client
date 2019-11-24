@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class SsdpClientImpl extends SsdpClient {
 
   // Interval in ms between subsequent discovery requests
-  private static final long INTERVAL_BETWEEN_REQUESTS = 10000;
+  public static final long DEFAULT_INTERVAL_BETWEEN_REQUESTS = 10000;
   private static final DiscoveryListener NOOP_LISTENER = new DiscoveryListener() {
     @Override
     public void onServiceDiscovered(SsdpService service) {
@@ -110,7 +110,7 @@ public class SsdpClientImpl extends SsdpClient {
       public void run() {
         sendDiscoveryRequest();
       }
-    }, 0, INTERVAL_BETWEEN_REQUESTS, TimeUnit.MILLISECONDS);
+    }, 0, req.getIntervalBetweenRequests(), TimeUnit.MILLISECONDS);
 
     // Receive all incoming datagrams and handle them on-the-fly
     receiveExecutor.execute(new Runnable() {
@@ -140,7 +140,7 @@ public class SsdpClientImpl extends SsdpClient {
    * @param packet the received datagram
    */
   private void handleIncomingPacket(DatagramPacket packet) {
-    SsdpResponse response = new ResponseParser().parse(packet);
+    SsdpResponse response = ResponseParser.parse(packet);
     if (response == null) {
       // Unknown to protocol
       return;
