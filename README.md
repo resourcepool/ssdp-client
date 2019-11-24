@@ -1,4 +1,4 @@
-# jarpic-client
+# ssdp-client
 A Simple Asynchronous SSDP/1.0 UPNP/1.1 Java Client using JDK APIs only.
 
 This library works on Android as well.

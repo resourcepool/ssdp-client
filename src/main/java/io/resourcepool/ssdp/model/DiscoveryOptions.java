@@ -26,11 +26,11 @@ public class DiscoveryOptions {
     return userAgent;
   }
 
+  // BEGIN GENERATED CODE
+
   public Builder builder() {
     return new Builder();
   }
-
-  // BEGIN GENERATED CODE
 
   public static final class Builder {
     private Long intervalBetweenRequests = DEFAULT_INTERVAL_BETWEEN_REQUESTS;

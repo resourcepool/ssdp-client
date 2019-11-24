@@ -18,6 +18,7 @@ public abstract class SsdpDiscovery {
    * Get Datagram from serviceType.
    *
    * @param serviceType the serviceType
+   * @param options the Request Discovery Options
    * @return the DatagramPacket matching the search request
    */
   public static DatagramPacket getDatagram(String serviceType, DiscoveryOptions options) {
