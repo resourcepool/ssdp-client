@@ -7,6 +7,11 @@ This library works on Android as well.
 [![Build Status](https://travis-ci.org/resourcepool/ssdp-client.svg?branch=master)](https://travis-ci.org/resourcepool/ssdp-client)
 
 ## Add it to your project
+
+Jar Download:  
+[https://mvnrepository.com/artifact/io.resourcepool/ssdp-client](https://mvnrepository.com/artifact/io.resourcepool/ssdp-client)
+
+
 Maven:
 ```xml
 <!-- https://mvnrepository.com/artifact/io.resourcepool/ssdp-client -->
