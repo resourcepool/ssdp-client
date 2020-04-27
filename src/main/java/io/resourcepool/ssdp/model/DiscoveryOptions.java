@@ -72,13 +72,11 @@ public class DiscoveryOptions {
     /**
      * User agent header used in the request.
      * Defaults to "Resourcepool SSDP Client"
+     * If set to null, user agent header will not be added
      * @param userAgent the user agent
      * @return the current builder
      */
     public Builder userAgent(String userAgent) {
-      if (userAgent == null || userAgent.trim().isEmpty()) {
-        throw new IllegalArgumentException("User-agent cannot be empty");
-      }
       this.userAgent = userAgent;
       return this;
     }
