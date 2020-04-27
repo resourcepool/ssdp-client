@@ -76,7 +76,7 @@ public class DiscoveryOptions {
      * @return the current builder
      */
     public Builder userAgent(String userAgent) {
-      if (userAgent != null && !userAgent.trim().isEmpty()) {
+      if (userAgent == null || userAgent.trim().isEmpty()) {
         throw new IllegalArgumentException("User-agent cannot be empty");
       }
       this.userAgent = userAgent;
