@@ -26,7 +26,9 @@ public abstract class SsdpDiscovery {
     sb.append("HOST: " + SsdpParams.getSsdpMulticastAddress().getHostAddress() + ":" + SsdpParams.getSsdpMulticastPort() + "\r\n");
     sb.append("MAN: \"ssdp:discover\"\r\n");
     sb.append("MX: " + options.getMaxWaitTimeSeconds() + "\r\n");
-    sb.append("USER-AGENT: " + options.getUserAgent() + "\r\n");
+    if (options.getUserAgent() != null) {
+      sb.append("USER-AGENT: " + options.getUserAgent() + "\r\n");
+    }
     sb.append((serviceType == null || serviceType.trim().isEmpty()) ? "ST: ssdp:all\r\n" : "ST: " + serviceType + "\r\n\r\n");
     byte[] content = sb.toString().getBytes(UTF_8);
     return new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastPort());
