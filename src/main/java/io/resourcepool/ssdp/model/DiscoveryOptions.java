@@ -28,7 +28,7 @@ public class DiscoveryOptions {
 
   // BEGIN GENERATED CODE
 
-  public Builder builder() {
+  public static Builder builder() {
     return new Builder();
   }
 
