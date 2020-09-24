@@ -25,7 +25,7 @@ public class ResponseParser {
   private static final SimpleDateFormat DATE_HEADER_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
   // Patterns
   private static final Pattern SEARCH_REQUEST_LINE_PATTERN = Pattern.compile("^HTTP/1\\.1 [0-9]+ .*");
-  private static final Pattern SERVICE_ANNOUNCEMENT_LINE_PATTERN = Pattern.compile("NOTIFY \\* HTTP/1.1");
+  private static final Pattern SERVICE_ANNOUNCEMENT_LINE_PATTERN = Pattern.compile("NOTIFY \\* HTTP/1\\.1");
   private static final Pattern HEADER_PATTERN = Pattern.compile("(.*?):(.*)$");
   // CRLF
   private static final byte[] CRLF = "\r\n".getBytes(UTF_8);
