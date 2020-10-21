@@ -18,15 +18,19 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>2.4.2</version>
+    <version>2.4.3</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.4.2'
+compile 'io.resourcepool:ssdp-client:2.4.3'
 ```
 
 ## Changelog
+
+### 2.4.3
+ * #22 Fixed multicast addressed datagrams
+ * #23 Bumb versions
 
 ### 2.4.2
  * #21 Fixed notify message regex
