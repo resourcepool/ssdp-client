@@ -184,7 +184,8 @@ public class SsdpClientImpl extends SsdpClient {
    */
   private void openAndBindSocket() {
     try {
-      this.clientSocket = new MulticastSocket();
+      this.clientSocket = new MulticastSocket(SsdpParams.getSsdpMulticastPort());
+      this.clientSocket.setReuseAddress(true);
       interfaces = Utils.getMulticastInterfaces();
       joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
