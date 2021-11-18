@@ -257,10 +257,16 @@ public class SsdpClientImpl extends SsdpClient {
   private void joinGroupOnAllInterfaces(InetAddress address) throws IOException {
     if (interfaces != null && interfaces.size() > 0) {
       InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
-
+      List<NetworkInterface> newInterfaces = new ArrayList<>();
       for (NetworkInterface iface : interfaces) {
-        this.clientSocket.joinGroup(socketAddress, iface);
+        try {
+          this.clientSocket.joinGroup(socketAddress, iface);
+          newInterfaces.add(iface);
+        } catch (IOException e) {
+          System.err.println("Ignoring multicast interface " + iface);
+        }
       }
+      interfaces = newInterfaces;
     } else {
       this.clientSocket.joinGroup(address);
     }
