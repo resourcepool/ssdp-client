@@ -6,10 +6,7 @@ import io.resourcepool.ssdp.client.util.Utils;
 import io.resourcepool.ssdp.client.request.SsdpDiscovery;
 import io.resourcepool.ssdp.client.response.SsdpResponse;
 import io.resourcepool.ssdp.exception.NoSerialNumberException;
-import io.resourcepool.ssdp.model.DiscoveryListener;
-import io.resourcepool.ssdp.model.DiscoveryRequest;
-import io.resourcepool.ssdp.model.SsdpService;
-import io.resourcepool.ssdp.model.SsdpServiceAnnouncement;
+import io.resourcepool.ssdp.model.*;
 import io.resourcepool.ssdp.client.parser.ResponseParser;
 
 import java.io.IOException;
@@ -94,7 +91,7 @@ public class SsdpClientImpl extends SsdpClient {
   }
 
   @Override
-  public void discoverServices(DiscoveryRequest req, final DiscoveryListener callback) {
+  public void discoverServices(DiscoveryRequest req, SsdpClientOptions options, DiscoveryListener callback) {
     if (State.ACTIVE.equals(state)) {
       callback.onFailed(new IllegalStateException("Another discovery is in progress. Stop the first discovery before starting a new one."));
       return;
@@ -102,7 +99,7 @@ public class SsdpClientImpl extends SsdpClient {
     // Reset attributes
     reset(req, callback);
     // Open and bind client socket to send / receive datagrams
-    openAndBindSocket();
+    openAndBindSocket(options);
 
     // Send UDP Discover Request Datagrams at a fixed rate
     sendExecutor.scheduleAtFixedRate(new Runnable() {
@@ -132,6 +129,11 @@ public class SsdpClientImpl extends SsdpClient {
         }
       }
     });
+  }
+
+  @Override
+  public void discoverServices(DiscoveryRequest req, final DiscoveryListener callback) {
+    discoverServices(req, SsdpClientOptions.builder().build(), callback);
   }
 
   /**
@@ -181,13 +183,14 @@ public class SsdpClientImpl extends SsdpClient {
 
   /**
    * Open MulticastSocket and bind to Ssdp port.
+   * @param options
    */
-  private void openAndBindSocket() {
+  private void openAndBindSocket(SsdpClientOptions options) {
     try {
       this.clientSocket = new MulticastSocket(SsdpParams.getSsdpMulticastPort());
       this.clientSocket.setReuseAddress(true);
       interfaces = Utils.getMulticastInterfaces();
-      joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
+      joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress(), options.getIgnoreInterfaceDiscoveryErrors());
     } catch (IOException e) {
       callback.onFailed(e);
     }
@@ -252,9 +255,10 @@ public class SsdpClientImpl extends SsdpClient {
    *
    * Falls back to the default joinGroup() if the interfaces list is not populated
    * @param address the multicast group address
+   * @param ignoreErrors whether to ignore group join errors or not
    * @throws IOException from the MulticastSocket
    */
-  private void joinGroupOnAllInterfaces(InetAddress address) throws IOException {
+  private void joinGroupOnAllInterfaces(InetAddress address, Boolean ignoreErrors) throws IOException {
     if (interfaces != null && interfaces.size() > 0) {
       InetSocketAddress socketAddress = new InetSocketAddress(address, 65535); // the port number does not matter here. it is ignored
       List<NetworkInterface> newInterfaces = new ArrayList<>();
@@ -263,10 +267,15 @@ public class SsdpClientImpl extends SsdpClient {
           this.clientSocket.joinGroup(socketAddress, iface);
           newInterfaces.add(iface);
         } catch (IOException e) {
-          System.err.println("Ignoring multicast interface " + iface);
+          if (!ignoreErrors) {
+            throw e;
+          }
         }
       }
       interfaces = newInterfaces;
+      if (interfaces.isEmpty()) {
+        throw new IOException("No interface was joined");
+      }
     } else {
       this.clientSocket.joinGroup(address);
     }
