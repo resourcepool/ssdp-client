@@ -61,11 +61,10 @@
       </activation>
       <properties>
         <gpg.executable>gpg</gpg.executable>
-        <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
-        <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+        <gpg.keyname>0x1945673E</gpg.keyname>
         <gpg.defaultKeyring>false</gpg.defaultKeyring>
-        <gpg.publicKeyring>${env.GPG_DIR}/pubring.gpg</gpg.publicKeyring>
-        <gpg.secretKeyring>${env.GPG_DIR}/secring.gpg</gpg.secretKeyring>
+        <gpg.publicKeyring>~/.gnupg/pubring.gpg</gpg.publicKeyring>
+        <gpg.secretKeyring>~/.gnupg/secring.gpg</gpg.secretKeyring>
       </properties>
       <build>
         <plugins>
@@ -73,7 +72,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
+            <version>3.0.1</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -88,7 +87,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
               <serverId>ossrh</serverId>

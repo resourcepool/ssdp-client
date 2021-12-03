@@ -18,15 +18,18 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>2.4.3</version>
+    <version>2.4.4</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.4.3'
+compile 'io.resourcepool:ssdp-client:2.4.4'
 ```
 
 ## Changelog
+
+### 2.4.4
+* #27 Fixed Android emulator issue
 
 ### 2.4.3
  * #22 Fixed multicast addressed datagrams
@@ -133,6 +136,34 @@ Discover specific SSDP service by serviceType (with custom options):
     });
 ```
 
+
+Discover specific SSDP service by serviceType (with custom options):
+
+```java
+    SsdpClient client = SsdpClient.create();
+    DiscoveryOptions options = DiscoveryOptions.builder()
+    .intervalBetweenRequests(10000L) // optional interval between requests, defaults to 10 000 milliseconds
+    .maxWaitTimeSeconds(3) // optional max wait time between req and response, defaults to 3 seconds
+    .userAgent("Resourcepool SSDP Client") // optional custom user-agent, defaults to "Resourcepool SSDP Client"
+    .build();
+
+    DiscoveryRequest networkStorageDevice = SsdpRequest.builder()
+    .serviceType("urn:schemas-upnp-org:device:networkstoragedevice:1")
+    .discoveryOptions(options) // optional as well. 
+    .build();
+    client.discoverServices(networkStorageDevice, new DiscoveryListener() {
+      @Override
+      public void onServiceDiscovered(SsdpService service) {
+        System.out.println("Found service: " + service);
+      }
+
+      @Override
+      public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+        System.out.println("Service announced something: " + announcement);
+      }
+    });
+```
+
 Discovery is not a mandatory activity. You might just want to listen to announcements:
 ```java
     SsdpClient client = SsdpClient.create();
@@ -149,13 +180,33 @@ Discovery is not a mandatory activity. You might just want to listen to announce
     });
 ```
 
+
+Ignoring unavailable Multicast Interface errors 
+
+```java
+    SsdpClient client = SsdpClient.create();
+    DiscoveryRequest all = SsdpRequest.discoverAll();
+    client.discoverServices(all, SsdpClientOptions.builder().ignoreInterfaceDiscoveryErrors().build(), new DiscoveryListener() {
+      @Override
+      public void onServiceDiscovered(SsdpService service) {
+        System.out.println("Found service: " + service);
+      }
+
+      @Override
+      public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+        System.out.println("Service announced something: " + announcement);
+      }
+    });
+```
+
+
 When you're done, don't forget to stop the discovery:
 ```java
 ssdpClient.stopDiscovery();
 ```
 
 ## License
-   Copyright 2020 Resourcepool
+   Copyright 2016-2022 Resourcepool
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
