@@ -18,15 +18,22 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>2.4.4</version>
+    <version>2.4.5</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.4.4'
+compile 'io.resourcepool:ssdp-client:2.4.5'
 ```
 
 ## Changelog
+
+### 2.4.5
+* #28 Fixed Android issue with potential interfaces not supporting Multicast
+* #29 Fixed potential NPE when stopping discovery as incoming packets are still arriving
+* #30 Fixed potential NPE when closing multicast socket before initial discovery is performed
+* #31 Implemented new SsdpClientOption to disable autoLookup
+* #31 Fixed potential concurrent modifications of the request list
 
 ### 2.4.4
 * #27 Fixed Android emulator issue
@@ -168,6 +175,25 @@ Discovery is not a mandatory activity. You might just want to listen to announce
 ```java
     SsdpClient client = SsdpClient.create();
     client.discoverServices(null, new DiscoveryListener() {
+      @Override
+      public void onServiceDiscovered(SsdpService service) {
+        System.out.println("Found service: " + service);
+      }
+
+      @Override
+      public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+        System.out.println("Service announced something: " + announcement);
+      }
+    });
+```
+
+
+Disabling automatic lookup for unknown incoming announcements
+
+```java
+    SsdpClient client = SsdpClient.create();
+    DiscoveryRequest all = SsdpRequest.discoverAll();
+    client.discoverServices(all, SsdpClientOptions.builder().disableAutoLookup().build(), new DiscoveryListener() {
       @Override
       public void onServiceDiscovered(SsdpService service) {
         System.out.println("Found service: " + service);

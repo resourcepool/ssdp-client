@@ -16,6 +16,7 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,9 +74,9 @@ public class SsdpClientImpl extends SsdpClient {
    * @param callback the callback
    */
   private void reset(DiscoveryRequest req, DiscoveryListener callback) {
-    this.callback = callback;
     this.state = State.ACTIVE;
-    this.requests = new ArrayList<DiscoveryRequest>();
+    this.callback = callback;
+    this.requests = Collections.synchronizedList(new ArrayList<>());
     if (req != null) {
       requests.add(req);
     }
@@ -105,7 +106,7 @@ public class SsdpClientImpl extends SsdpClient {
     sendExecutor.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
-        sendDiscoveryRequest();
+        sendDiscoveryRequest(options);
       }
     }, 0, req.getDiscoveryOptions().getIntervalBetweenRequests(), TimeUnit.MILLISECONDS);
 
@@ -118,7 +119,7 @@ public class SsdpClientImpl extends SsdpClient {
             byte[] buffer = new byte[8192];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             clientSocket.receive(packet);
-            handleIncomingPacket(packet);
+            handleIncomingPacket(packet, options);
           }
         } catch (IOException e) {
           if (clientSocket.isClosed() && !State.ACTIVE.equals(state)) {
@@ -141,7 +142,7 @@ public class SsdpClientImpl extends SsdpClient {
    *
    * @param packet the received datagram
    */
-  private void handleIncomingPacket(DatagramPacket packet) {
+  private void handleIncomingPacket(DatagramPacket packet, SsdpClientOptions options) {
     SsdpResponse response = ResponseParser.parse(packet);
     if (response == null) {
       // Unknown to protocol
@@ -150,33 +151,45 @@ public class SsdpClientImpl extends SsdpClient {
     if (response.getType().equals(SsdpResponse.Type.DISCOVERY_RESPONSE)) {
       handleDiscoveryResponse(response);
     } else if (response.getType().equals(SsdpResponse.Type.PRESENCE_ANNOUNCEMENT)) {
-      handlePresenceAnnouncement(response);
+      handlePresenceAnnouncement(response, options);
     }
   }
 
   /**
    * Send discovery Multicast request.
+   * @param options
    */
-  private void sendDiscoveryRequest() {
+  private void sendDiscoveryRequest(SsdpClientOptions options) {
     try {
       if (requests.isEmpty()) {
         // Do nothing if no request has been set
         return;
       }
       for (DiscoveryRequest req : requests) {
-        if (req.getServiceTypes() == null || req.getServiceTypes().isEmpty()) {
-          sendOnAllInterfaces(SsdpDiscovery.getDatagram(null, req.getDiscoveryOptions()));
-        } else {
-          for (String st : req.getServiceTypes()) {
-            sendOnAllInterfaces(SsdpDiscovery.getDatagram(st, req.getDiscoveryOptions()));
+        try {
+          if (req.getServiceTypes() == null || req.getServiceTypes().isEmpty()) {
+            sendOnAllInterfaces(SsdpDiscovery.getDatagram(null, req.getDiscoveryOptions()));
+          } else {
+            for (String st : req.getServiceTypes()) {
+              sendOnAllInterfaces(SsdpDiscovery.getDatagram(st, req.getDiscoveryOptions()));
+            }
           }
+        } catch (IOException e) {
+          if (options.getIgnoreInterfaceDiscoveryErrors()) {
+            callback.onFailedAndIgnored(e);
+            return;
+          }
+          throw e;
         }
+
       }
     } catch (IOException e) {
       if (clientSocket.isClosed() && !State.ACTIVE.equals(state)) {
         // This could happen when closing socket. In that case, this is not an issue.
         return;
       }
+      callback.onFailed(e);
+    } catch (Exception e) {
       callback.onFailed(e);
     }
   }
@@ -202,7 +215,7 @@ public class SsdpClientImpl extends SsdpClient {
    *
    * @param response the incoming announcement
    */
-  private void handlePresenceAnnouncement(SsdpResponse response) {
+  private void handlePresenceAnnouncement(SsdpResponse response, SsdpClientOptions options) {
     SsdpServiceAnnouncement ssdpServiceAnnouncement = response.toServiceAnnouncement();
     if (ssdpServiceAnnouncement.getSerialNumber() == null) {
       callback.onFailed(new NoSerialNumberException());
@@ -210,7 +223,7 @@ public class SsdpClientImpl extends SsdpClient {
     }
     if (cache.containsKey(ssdpServiceAnnouncement.getSerialNumber())) {
       callback.onServiceAnnouncement(ssdpServiceAnnouncement);
-    } else {
+    } else if (options.getLookupAllIncomingAnnouncements()) {
       requests.add(DiscoveryRequest.builder().serviceType(ssdpServiceAnnouncement.getServiceType()).build());
     }
   }
@@ -269,6 +282,8 @@ public class SsdpClientImpl extends SsdpClient {
         } catch (IOException e) {
           if (!ignoreErrors) {
             throw e;
+          } else {
+            callback.onFailedAndIgnored(e);
           }
         }
       }
@@ -306,14 +321,16 @@ public class SsdpClientImpl extends SsdpClient {
     this.receiveExecutor.shutdownNow();
     this.sendExecutor.shutdownNow();
     this.callback = NOOP_LISTENER;
-    this.requests = null;
     try {
       leaveGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress());
     } catch (IOException e) {
       // Fail silently
     } finally {
-      this.clientSocket.close();
+      if (this.clientSocket != null) {
+        this.clientSocket.close();
+      }
     }
+    this.requests = null;
     this.interfaces = null;
     this.state = State.IDLE;
   }

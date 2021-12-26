@@ -25,6 +25,11 @@ public abstract class Utils {
     Enumeration e = NetworkInterface.getNetworkInterfaces();
     while (e.hasMoreElements()) {
       NetworkInterface n = (NetworkInterface) e.nextElement();
+      // Added due to Android security requirements
+      // @see @jeremiabitterfeld https://github.com/resourcepool/ssdp-client/issues/28#issuecomment-1000477607
+      if(!n.supportsMulticast() ) {
+        continue;
+      }
       Enumeration ee = n.getInetAddresses();
       while (ee.hasMoreElements()) {
         InetAddress i = (InetAddress) ee.nextElement();

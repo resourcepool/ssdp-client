@@ -23,9 +23,16 @@ public interface DiscoveryListener {
   void onServiceAnnouncement(SsdpServiceAnnouncement announcement);
 
   /**
-   * Called when an exception occured within the process.
+   * Called when an exception occurred within the process.
    *
    * @param ex the exception raised
    */
   void onFailed(Exception ex);
+
+  /**
+   * Called when an exception occurs within the discovery process and has been voluntarily ignored in the discovery options.
+   *
+   * @param ex the exception raised
+   */
+  default void onFailedAndIgnored(Exception ex) {}
 }
