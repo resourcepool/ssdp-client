@@ -8,6 +8,10 @@ public class SsdpClientOptions {
 
   private Boolean ignoreInterfaceDiscoveryErrors = false;
   private Boolean lookupAllIncomingAnnouncements = true;
+  /**
+   * Allow the program to process the discover response
+   */
+  private Boolean useCache=true;
 
   public Boolean getIgnoreInterfaceDiscoveryErrors() {
     return ignoreInterfaceDiscoveryErrors;
@@ -17,7 +21,10 @@ public class SsdpClientOptions {
     return lookupAllIncomingAnnouncements;
   }
 
-  // BEGIN GENERATED CODE
+  public Boolean getUseCache() {
+    return useCache;
+  }
+// BEGIN GENERATED CODE
 
   public static Builder builder() {
     return new Builder();
@@ -27,6 +34,7 @@ public class SsdpClientOptions {
 
     private Boolean ignoreInterfaceErrors = false;
     private Boolean lookupAllIncomingAnnouncements = true;
+    private Boolean useCache=true;
 
     private Builder() {
     }
@@ -55,10 +63,15 @@ public class SsdpClientOptions {
       this.lookupAllIncomingAnnouncements = false;
       return this;
     }
-
+    public Builder disableCache() {
+      this.useCache = false;
+      return this;
+    }
     public SsdpClientOptions build() {
       SsdpClientOptions discoveryOptions = new SsdpClientOptions();
       discoveryOptions.ignoreInterfaceDiscoveryErrors = this.ignoreInterfaceErrors;
+      discoveryOptions.useCache=this.useCache;
+      discoveryOptions.lookupAllIncomingAnnouncements=this.lookupAllIncomingAnnouncements;
       return discoveryOptions;
     }
   }

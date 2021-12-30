@@ -11,7 +11,12 @@ import java.nio.charset.Charset;
  */
 public class SsdpParams {
   private static InetAddress ssdpMulticastIpv4Address;
-  private static final int SSDP_MULTICAST_PORT = 1900;
+  private static   int SSDP_MULTICAST_PORT = 1900;
+  /**
+   * separate the message sending port and receiving port
+   * If another application on the same server also listens to udp port 1900, and the binding source port is 1900, the program may not receive a response
+   */
+  private static  int BIND_LOCAL_PORT=1900;
 
   public static final Charset UTF_8 = Charset.forName("UTF-8");
 
@@ -38,5 +43,15 @@ public class SsdpParams {
    */
   public static int getSsdpMulticastPort() {
     return SSDP_MULTICAST_PORT;
+  }
+  public static void setSsdpMulticastPort(int port) {
+      SSDP_MULTICAST_PORT=port;
+  }
+
+  public static int getBindLocalPort() {
+    return BIND_LOCAL_PORT;
+  }
+  public static void setBindLocalPort(int port) {
+    BIND_LOCAL_PORT=port;
   }
 }

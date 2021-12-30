@@ -149,7 +149,7 @@ public class SsdpClientImpl extends SsdpClient {
       return;
     }
     if (response.getType().equals(SsdpResponse.Type.DISCOVERY_RESPONSE)) {
-      handleDiscoveryResponse(response);
+      handleDiscoveryResponse(response,options);
     } else if (response.getType().equals(SsdpResponse.Type.PRESENCE_ANNOUNCEMENT)) {
       handlePresenceAnnouncement(response, options);
     }
@@ -200,7 +200,7 @@ public class SsdpClientImpl extends SsdpClient {
    */
   private void openAndBindSocket(SsdpClientOptions options) {
     try {
-      this.clientSocket = new MulticastSocket(SsdpParams.getSsdpMulticastPort());
+      this.clientSocket = new MulticastSocket(SsdpParams.getBindLocalPort());
       this.clientSocket.setReuseAddress(true);
       interfaces = Utils.getMulticastInterfaces();
       joinGroupOnAllInterfaces(SsdpParams.getSsdpMulticastAddress(), options.getIgnoreInterfaceDiscoveryErrors());
@@ -233,13 +233,14 @@ public class SsdpClientImpl extends SsdpClient {
    *
    * @param response the incoming response
    */
-  private void handleDiscoveryResponse(SsdpResponse response) {
+  private void handleDiscoveryResponse(SsdpResponse response,SsdpClientOptions options) {
     SsdpService ssdpService = response.toService();
     if (ssdpService.getSerialNumber() == null) {
       callback.onFailed(new NoSerialNumberException());
       return;
     }
-    if (!cache.containsKey(ssdpService.getSerialNumber())) {
+    //if program disabled cache ,onServiceDiscovered will always exec
+    if (options.getUseCache()&&!cache.containsKey(ssdpService.getSerialNumber())) {
       callback.onServiceDiscovered(ssdpService);
     }
     cache.put(ssdpService.getSerialNumber(), ssdpService);
