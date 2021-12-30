@@ -240,7 +240,7 @@ public class SsdpClientImpl extends SsdpClient {
       return;
     }
     //if program disabled cache ,onServiceDiscovered will always exec
-    if (options.getUseCache()&&!cache.containsKey(ssdpService.getSerialNumber())) {
+    if (!options.getUseCache()||!cache.containsKey(ssdpService.getSerialNumber())) {
       callback.onServiceDiscovered(ssdpService);
     }
     cache.put(ssdpService.getSerialNumber(), ssdpService);
