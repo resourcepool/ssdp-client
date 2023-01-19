@@ -18,17 +18,17 @@ Maven:
 <dependency>
     <groupId>io.resourcepool</groupId>
     <artifactId>ssdp-client</artifactId>
-    <version>2.4.5</version>
+    <version>2.5.0</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.4.6'
+compile 'io.resourcepool:ssdp-client:2.5.0'
 ```
 
 ## Changelog
 
-### 2.4.6
+### 2.5.0
 * #32 Handle multiple responses on its own
 * #33 Response misc behaviour
 * #35 Fixed NPE
