@@ -224,7 +224,9 @@ public class SsdpClientImpl extends SsdpClient {
     if (cache.containsKey(ssdpServiceAnnouncement.getSerialNumber())) {
       callback.onServiceAnnouncement(ssdpServiceAnnouncement);
     } else if (options.getLookupAllIncomingAnnouncements()) {
-      requests.add(DiscoveryRequest.builder().serviceType(ssdpServiceAnnouncement.getServiceType()).build());
+      if (requests != null) {
+        requests.add(DiscoveryRequest.builder().serviceType(ssdpServiceAnnouncement.getServiceType()).build());
+      }
     }
   }
 
