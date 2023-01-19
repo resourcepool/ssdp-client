@@ -23,10 +23,15 @@ Maven:
 ```
 Gradle:
 ```groovy
-compile 'io.resourcepool:ssdp-client:2.4.5'
+compile 'io.resourcepool:ssdp-client:2.4.6'
 ```
 
 ## Changelog
+
+### 2.4.6
+* #32 Handle multiple responses on its own
+* #33 Response misc behaviour
+* #35 Fixed NPE
 
 ### 2.4.5
 * #28 Fixed Android issue with potential interfaces not supporting Multicast
