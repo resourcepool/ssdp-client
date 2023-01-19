@@ -10,33 +10,32 @@ import java.nio.charset.Charset;
  * @author Loïc Ortola on 05/08/2017
  */
 public class SsdpParams {
-  private static InetAddress ssdpMulticastIpv4Address;
-  private static final int SSDP_MULTICAST_PORT = 1900;
+    private static InetAddress ssdpMulticastIpv4Address;
+    private static final int SSDP_MULTICAST_DEFAULT_PORT = 1900;
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
-  public static final Charset UTF_8 = Charset.forName("UTF-8");
-
-  /**
-   * @return the Ssdp Multicast Ip Address
-   */
-  public static InetAddress getSsdpMulticastAddress() {
-    if (ssdpMulticastIpv4Address == null) {
-      synchronized (SsdpParams.class) {
+    /**
+     * @return the Ssdp Multicast Ip Address
+     */
+    public static InetAddress getSsdpMulticastAddress() {
         if (ssdpMulticastIpv4Address == null) {
-          try {
-            ssdpMulticastIpv4Address = InetAddress.getByName("239.255.255.250");
-          } catch (UnknownHostException e) {
-            throw new IllegalStateException(e);
-          }
+            synchronized (SsdpParams.class) {
+                if (ssdpMulticastIpv4Address == null) {
+                    try {
+                        ssdpMulticastIpv4Address = InetAddress.getByName("239.255.255.250");
+                    } catch (UnknownHostException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            }
         }
-      }
+        return ssdpMulticastIpv4Address;
     }
-    return ssdpMulticastIpv4Address;
-  }
 
-  /**
-   * @return the Ssdp Port
-   */
-  public static int getSsdpMulticastPort() {
-    return SSDP_MULTICAST_PORT;
-  }
+    /**
+     * @return the Ssdp Port
+     */
+    public static int getSsdpMulticastDefaultPort() {
+        return SSDP_MULTICAST_DEFAULT_PORT;
+    }
 }

@@ -193,7 +193,31 @@ Disabling automatic lookup for unknown incoming announcements
 ```java
     SsdpClient client = SsdpClient.create();
     DiscoveryRequest all = SsdpRequest.discoverAll();
-    client.discoverServices(all, SsdpClientOptions.builder().disableAutoLookup().build(), new DiscoveryListener() {
+    DiscoveryOptions options = DiscoveryOptions.builder()
+     .intervalBetweenRequests(10000L) // optional interval between requests, defaults to 10 000 milliseconds
+     .maxWaitTimeSeconds(3) // optional max wait time between req and response, defaults to 3 seconds
+     .userAgent("Resourcepool SSDP Client") // optional custom user-agent, defaults to "Resourcepool SSDP Client"
+     .overrideBindingPort(1901)
+     .build();
+    client.discoverServices(all, options, new DiscoveryListener() {
+      @Override
+      public void onServiceDiscovered(SsdpService service) {
+        System.out.println("Found service: " + service);
+      }
+
+      @Override
+      public void onServiceAnnouncement(SsdpServiceAnnouncement announcement) {
+        System.out.println("Service announced something: " + announcement);
+      }
+    });
+```
+
+Ignoring unavailable Multicast Interface errors 
+
+```java
+    SsdpClient client = SsdpClient.create();
+    DiscoveryRequest all = SsdpRequest.discoverAll();
+    client.discoverServices(all, SsdpClientOptions.builder().ignoreInterfaceDiscoveryErrors().build(), new DiscoveryListener() {
       @Override
       public void onServiceDiscovered(SsdpService service) {
         System.out.println("Found service: " + service);
@@ -207,7 +231,7 @@ Disabling automatic lookup for unknown incoming announcements
 ```
 
 
-Ignoring unavailable Multicast Interface errors 
+Overriding default binding port (defaults to **1900**)
 
 ```java
     SsdpClient client = SsdpClient.create();
