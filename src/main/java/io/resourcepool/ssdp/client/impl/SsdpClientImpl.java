@@ -211,7 +211,6 @@ public class SsdpClientImpl extends SsdpClient {
         }
     }
 
-
     /**
      * Handle presence announcement Datagrams.
      *
@@ -226,7 +225,9 @@ public class SsdpClientImpl extends SsdpClient {
         if (cache.containsKey(ssdpServiceAnnouncement.getSerialNumber())) {
             callback.onServiceAnnouncement(ssdpServiceAnnouncement);
         } else if (options.getLookupAllIncomingAnnouncements()) {
+          if (requests != null) {
             requests.add(DiscoveryRequest.builder().serviceType(ssdpServiceAnnouncement.getServiceType()).build());
+          }
         }
     }
 
