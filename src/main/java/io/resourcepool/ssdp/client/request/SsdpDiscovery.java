@@ -23,7 +23,7 @@ public abstract class SsdpDiscovery {
    */
   public static DatagramPacket getDatagram(String serviceType, DiscoveryOptions options) {
     StringBuilder sb = new StringBuilder("M-SEARCH * HTTP/1.1\r\n");
-    sb.append("HOST: " + SsdpParams.getSsdpMulticastAddress().getHostAddress() + ":" + SsdpParams.getSsdpMulticastPort() + "\r\n");
+    sb.append("HOST: " + SsdpParams.getSsdpMulticastAddress().getHostAddress() + ":" + SsdpParams.getSsdpMulticastDefaultPort() + "\r\n");
     sb.append("MAN: \"ssdp:discover\"\r\n");
     sb.append("MX: " + options.getMaxWaitTimeSeconds() + "\r\n");
     if (options.getUserAgent() != null) {
@@ -33,6 +33,6 @@ public abstract class SsdpDiscovery {
     sb.append("\r\n");
 
     byte[] content = sb.toString().getBytes(UTF_8);
-    return new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastPort());
+    return new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastDefaultPort());
   }
 }

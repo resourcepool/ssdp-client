@@ -35,7 +35,7 @@ public class SSDPResponseParserTest {
         .append("INFO: 'shouldbeinvalue: thistoo'\r\n");
 
     byte[] content = sb.toString().getBytes(UTF_8);
-    DatagramPacket datagramPacket = new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastPort());
+    DatagramPacket datagramPacket = new DatagramPacket(content, content.length, SsdpParams.getSsdpMulticastAddress(), SsdpParams.getSsdpMulticastDefaultPort());
 
     SsdpResponse response = ResponseParser.parse(datagramPacket);
     Assert.assertTrue(response.getHeaders().containsKey("NORMAL"));
