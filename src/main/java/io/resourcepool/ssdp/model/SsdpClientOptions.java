@@ -79,11 +79,22 @@ public class SsdpClientOptions {
             return this;
         }
 
+        /**
+         * Overrides Binding Port.
+         * Sometimes, one may need to use another source binding port other than 1900.
+         * Note that the SSDP multicast default port will not be altered by this. Only affects binding port.
+         * @return the current builder
+         */
         public Builder overrideBindingPort(int port) {
             this.bindingPort = port;
             return this;
         }
 
+        /**
+         * Disables caching SSDP entries
+         * This behaviour disables caching for SSDP entries.
+         * @return the current builder
+         */
         public Builder disableCache() {
             this.useCache = false;
             return this;
