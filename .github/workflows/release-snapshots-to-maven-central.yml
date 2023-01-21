@@ -1,8 +1,8 @@
-name: release-tags-to-maven-central
+name: release-snapshots-to-maven-central
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - master
 jobs:
   publish:
     runs-on: ubuntu-latest
