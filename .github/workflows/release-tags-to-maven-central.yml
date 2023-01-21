@@ -2,7 +2,7 @@ name: release-tags-to-maven-central
 on:
   push:
     tags:
-      - *
+      - '*'
 jobs:
   publish:
     runs-on: ubuntu-latest
