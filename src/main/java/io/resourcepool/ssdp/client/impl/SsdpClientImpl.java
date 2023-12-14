@@ -219,7 +219,7 @@ public class SsdpClientImpl extends SsdpClient {
     private void handlePresenceAnnouncement(SsdpResponse response, SsdpClientOptions options) {
         SsdpServiceAnnouncement ssdpServiceAnnouncement = response.toServiceAnnouncement();
         if (ssdpServiceAnnouncement.getSerialNumber() == null) {
-            callback.onFailed(new NoSerialNumberException());
+            callback.onFailed(new NoSerialNumberException(response));
             return;
         }
         if (cache.containsKey(ssdpServiceAnnouncement.getSerialNumber())) {
@@ -239,7 +239,7 @@ public class SsdpClientImpl extends SsdpClient {
     private void handleDiscoveryResponse(SsdpResponse response, SsdpClientOptions options) {
         SsdpService ssdpService = response.toService();
         if (ssdpService.getSerialNumber() == null) {
-            callback.onFailed(new NoSerialNumberException());
+            callback.onFailed(new NoSerialNumberException(response));
             return;
         }
         // If our program disabled cache, onServiceDiscovered will always be triggered
