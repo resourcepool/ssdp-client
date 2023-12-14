@@ -19,9 +19,17 @@ public class NoSerialNumberException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "NoSerialNumberException{" +
-                "response=" + response +
-                '}';
+        try{
+            return "NoSerialNumberException{" +
+                    "response=" + response +
+                    '}';
+        } catch (NullPointerException e) {
+            System.err.println("NullPointerException occurred: " + e.getMessage());
+            return "NoSerialNumberException{response=null}";
+        } catch (Exception e) {
+            System.err.println("An unexpected exception occurred: " + e.getMessage());
+            return "NoSerialNumberException{unexpected error}";
+        }
     }
 
 }
